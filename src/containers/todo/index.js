@@ -105,7 +105,6 @@ function Todo() {
         if(!taskItems || taskItems.length == 0){
             return null
         } else{
-            console.log('++++++++++++++++++++', taskItems, taskItems.length)
             return (
                 taskItems.map((item, index) => {
                     return (

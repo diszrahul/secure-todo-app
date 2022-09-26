@@ -23,6 +23,7 @@
     "react-native": "0.69.5",
     "react-native-safe-area-context": "4.3.1",
     "react-native-screens": "~3.15.0",
+    "react-native-svg": "12.3.0",
     "react-native-uuid": "^2.0.1"
   },
   "devDependencies": {
@@ -30,19 +31,23 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/jest-native": "^4.0.12",
     "@testing-library/react-native": "^11.1.0",
+    "react-native-svg-transformer": "^1.0.0",
     "react-test-renderer": "18.0.0"
   },
   "private": true,
   "jest": {
     "preset": "jest-expo",
     "transformIgnorePatterns": [
-      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)"
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|react-native-svg-transformer)"
     ],
     "setupFilesAfterEnv": [
       "@testing-library/jest-native/extend-expect"
     ],
     "setupFiles": [
       "./src/setupTests.js"
-    ]
+    ],
+    "moduleNameMapper": {
+      "\\.svg": "<rootDir>/__mocks__/svgMock.js"
+    }
   }
 }

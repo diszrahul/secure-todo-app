@@ -8,7 +8,8 @@ import TEXTS from '../../constants/Texts';
 import uuid from 'react-native-uuid';
 
 function Todo() {
-    const [task, setTask] = useState({title: '', description: '', type: TEXTS.activeTab.pending, ID: ''});
+    const initialTask = {title: '', description: '', type: TEXTS.activeTab.pending, ID: ''}
+    const [task, setTask] = useState(initialTask);
     const [taskItems, setTaskItems] = useState([]);
     const [nullError, setNullError] = useState(false);
     const [activeTab, setActiveTab] = useState(TEXTS.activeTab.pending);
@@ -63,7 +64,7 @@ function Todo() {
         }
         Keyboard.dismiss();
         setTaskItems([...taskItems, task])
-        setTask({title: '', description: '', type: TEXTS.activeTab.pending, ID: ''});
+        setTask(initialTask);
       }
       
       /*
@@ -218,10 +219,53 @@ function Todo() {
           return TEXTS.headings.completedTasks
         }
       }
+
+      const getFormattedDate = () => {
+        Date.prototype.toShortFormat = function() {
+
+          let monthNames =["Jan","Feb","Mar","Apr",
+                            "May","Jun","Jul","Aug",
+                            "Sep", "Oct","Nov","Dec"];
+          
+          let day = this.getDate();
+          
+          let monthIndex = this.getMonth();
+          let monthName = monthNames[monthIndex];
+          
+          return `${day} ${monthName}`;  
+      }
+
+      let today = new Date()
+      return today.toShortFormat()
+      }
+
+      /*
+      @output: JSX
+      */
+      const renderHeader = () => {
+          return (
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 20}}>
+                <View>
+                      <View>
+                            <Text>Welcome Back,</Text>
+                      </View>
+                      <View>
+                            <Text style={{fontSize: 20, fontWeight: '800'}}>James Sullivan</Text>
+                      </View>
+                </View>
+
+                <View style={{backgroundColor: COLORS.whiteColor, borderRadius: 8, justifyContent: 'center', alignItems: 'center', padding: 5}}>
+                      <Text>{getFormattedDate()}</Text>
+                </View>
+            </View>
+          )
+      }
     
     // Main rendering of TODO
     return (
         <SafeAreaView style={styles.container}>
+
+          {renderHeader()}
 
           {renderTabs()}
 
@@ -270,12 +314,10 @@ function Todo() {
 
 
   const styles = StyleSheet.create({
-    safeContainer: {
-      flex: 1,
-    },
     container: {
         flex: 1,
         backgroundColor: '#E8EAED',
+        paddingTop: 20
       },
       tasksWrapper: {
         paddingTop: 30,

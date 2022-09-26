@@ -52,7 +52,7 @@ it("should create multiple items", () => {
 // delete an item
 it("should delete an item", () => {
     // Get all the required details
-    const { getByText, getByPlaceholderText, queryByText } = render(<Todo />);
+    const { getByText, getByPlaceholderText, queryByText, getByTestId } = render(<Todo />);
     const addItemButton = getByText("+");
     const textInput = getByPlaceholderText('Write a task');
     const createdText = 'first item';
@@ -61,7 +61,7 @@ it("should delete an item", () => {
     fireEvent.changeText(textInput, createdText);
     fireEvent.press(addItemButton);
 
-    const deleteItemButton = getByText("-");
+    const deleteItemButton = getByTestId("deleteIcon");
     fireEvent.press(deleteItemButton);
 
     // check assertions

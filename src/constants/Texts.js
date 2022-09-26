@@ -1,5 +1,5 @@
 const TEXTS = {
-    STORAGE_KEY: 'TEST1',
+    STORAGE_KEY: 'TEST2',
     activeTab: {
         pending: 'Pending',
         completed: 'Completed'

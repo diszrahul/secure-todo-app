@@ -5,9 +5,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Task from '../../components/Task';
 import COLORS from '../../constants/Colors';
 import TEXTS from '../../constants/Texts';
+import uuid from 'react-native-uuid';
 
 function Todo() {
-    const [task, setTask] = useState({title: '', description: '', type: TEXTS.activeTab.pending});
+    const [task, setTask] = useState({title: '', description: '', type: TEXTS.activeTab.pending, ID: ''});
     const [taskItems, setTaskItems] = useState([]);
     const [nullError, setNullError] = useState(false);
     const [activeTab, setActiveTab] = useState(TEXTS.activeTab.pending);
@@ -61,11 +62,14 @@ function Todo() {
         }
         Keyboard.dismiss();
         setTaskItems([...taskItems, task])
-        setTask({title: '', description: '', type: TEXTS.activeTab.pending});
+        setTask({title: '', description: '', type: TEXTS.activeTab.pending, ID: ''});
       }
     
-      const removeTask = (index) => {
+      const removeTask = (id) => {
         let itemsCopy = [...taskItems];
+        let obj = itemsCopy.find(o => o.ID === id);
+        let index = itemsCopy.indexOf(obj)
+
         itemsCopy.splice(index, 1);
         setTaskItems(itemsCopy)
       }
@@ -84,7 +88,8 @@ function Todo() {
         let task = {
           title: text,
           description: '',
-          type: TEXTS.activeTab.pending
+          type: TEXTS.activeTab.pending,
+          ID: uuid.v4()
         }
         setTask(task)
         setNullError(false)
@@ -108,8 +113,11 @@ function Todo() {
         AsyncStorage.removeItem(TEXTS.STORAGE_KEY);
       }
 
-      const handleCheckBox = (index) =>{
+      const handleCheckBox = (id) =>{
         let itemsCopy = [...taskItems];
+        let obj = itemsCopy.find(o => o.ID === id);
+        let index = itemsCopy.indexOf(obj)
+
         if(itemsCopy[index].type == TEXTS.activeTab.completed){
             itemsCopy[index].type = TEXTS.activeTab.pending
         } else {
@@ -126,11 +134,11 @@ function Todo() {
                 taskItems.map((item, index) => {
                   if(activeTab == TEXTS.activeTab.pending && item.type == TEXTS.activeTab.pending){
                     return (
-                      <Task handleCheckBox = {handleCheckBox} item={item} key={index} id={index} removeItem={removeTask}  /> 
+                      <Task handleCheckBox = {handleCheckBox} item={item} key={index} removeItem={removeTask}  /> 
                     )
                   } else if(activeTab == TEXTS.activeTab.completed && item.type == TEXTS.activeTab.completed){
                     return (
-                      <Task handleCheckBox = {handleCheckBox} item={item} key={index} id={index} removeItem={removeTask}  /> 
+                      <Task handleCheckBox = {handleCheckBox} item={item} key={index} removeItem={removeTask}  /> 
                     )
                   }
                    

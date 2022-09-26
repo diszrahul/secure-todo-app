@@ -4,7 +4,7 @@ import Checkbox from 'expo-checkbox';
 import TEXTS from '../constants/Texts';
 
 const Task = (props) => {
-  const {item, id} = props
+  const {item} = props
   let checkValue = false
   if(item && item.type){
       if(item.type == TEXTS.activeTab.completed){
@@ -31,7 +31,7 @@ const Task = (props) => {
               onAnimationType={'fade'}
               value={checkValue}
               boxType="square"
-              onValueChange={()=>{props.handleCheckBox(id)}}
+              onValueChange={()=>{props.handleCheckBox(item.ID)}}
             />
       </View>
       
@@ -39,7 +39,7 @@ const Task = (props) => {
             <Text style={styles.itemText}>{props.item.title}</Text>
       </View>
 
-      <TouchableOpacity style={{flex: 0.5}} onPress={props.removeItem}>
+      <TouchableOpacity style={{flex: 0.5}} onPress={()=>{props.removeItem(item.ID)}}>
             <View style={{flex: 1}}>
                 <Text>-</Text>
             </View>

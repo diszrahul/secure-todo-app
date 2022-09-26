@@ -14,22 +14,23 @@ function Todo() {
     const [activeTab, setActiveTab] = useState(TEXTS.activeTab.pending);
     const didMount = useRef(false);
 
+    // For persisting the todos 
     const storeData = async (value) => {
         try {
           const jsonValue = JSON.stringify(value)
           await AsyncStorage.setItem(TEXTS.STORAGE_KEY, jsonValue)
         } catch (e) {
-          // saving error
+          // TODO: handle error
         }
       }
     
       useEffect(()=>{
-        // Add data to the async storage
-        
+        // used ref here, as we don't the storing of data on first render
         if(taskItems && didMount.current){
             storeData(taskItems)
         }
         
+        // setting the ref to false
         if (!didMount.current) {
             didMount.current = true;
        }
@@ -50,11 +51,11 @@ function Todo() {
             setTaskItems(JSON.parse(data))
         }
         } catch(e) {
-        // error reading value
+        // TODO: handle error
         }
     }
   
-
+    // On click of add button
     const handleAddTask = () => {
         if(!task || task.title == ''){
            setNullError(true)
@@ -64,7 +65,10 @@ function Todo() {
         setTaskItems([...taskItems, task])
         setTask({title: '', description: '', type: TEXTS.activeTab.pending, ID: ''});
       }
-    
+      
+      /*
+      @input: id as uuid
+      */
       const removeTask = (id) => {
         let itemsCopy = [...taskItems];
         let obj = itemsCopy.find(o => o.ID === id);
@@ -73,7 +77,10 @@ function Todo() {
         itemsCopy.splice(index, 1);
         setTaskItems(itemsCopy)
       }
-
+      
+      /*
+      @output: JSX
+      */
       const renderNullError = () => {
         if(nullError){
             return (<View style={styles.errorView}>
@@ -84,6 +91,9 @@ function Todo() {
         }
       }
 
+      /*
+      @input: string
+      */
       const changeText = (text) => {
         let task = {
           title: text,
@@ -95,6 +105,9 @@ function Todo() {
         setNullError(false)
       }
 
+      /*
+      @output: JSX
+      */
       const renderUserInputArea = () => {
         return (
             <View style={styles.userInputView}>
@@ -113,6 +126,9 @@ function Todo() {
         AsyncStorage.removeItem(TEXTS.STORAGE_KEY);
       }
 
+      /*
+      @input: id as uuid
+      */
       const handleCheckBox = (id) =>{
         let itemsCopy = [...taskItems];
         let obj = itemsCopy.find(o => o.ID === id);
@@ -126,6 +142,9 @@ function Todo() {
         setTaskItems(itemsCopy)
       }
 
+      /*
+      @output: JSX
+      */
       const renderTasks = () => {
         if(!taskItems || taskItems.length == 0){
             return null
@@ -147,6 +166,10 @@ function Todo() {
         }
       }
 
+      /*
+      @input: boolean
+      @output: JSX
+      */
       const getTabTextStyle = (active) => {
           if(active){
             return {color: COLORS.whiteColor}
@@ -155,6 +178,10 @@ function Todo() {
           }
       }
 
+      /*
+      @input: boolean
+      @output: JSX
+      */
       const getTabButtonStyle = (active)  => {
           if(active){
             return {borderColor: COLORS.primaryColor, backgroundColor: COLORS.primaryColor}
@@ -163,6 +190,9 @@ function Todo() {
           }
       }
 
+      /*
+      @output: JSX
+      */
       const renderTabs = () => {
         return(
           <View style={{flexDirection: 'row', marginTop: 20, paddingHorizontal: 20}}>
@@ -178,6 +208,9 @@ function Todo() {
         )
       }
 
+      /*
+      @output: String
+      */
       const getHeading = () => {
         if(activeTab == TEXTS.activeTab.pending){
           return TEXTS.headings.todaysTask
@@ -185,7 +218,8 @@ function Todo() {
           return TEXTS.headings.completedTasks
         }
       }
-
+    
+    // Main rendering of TODO
     return (
         <SafeAreaView style={styles.container}>
 

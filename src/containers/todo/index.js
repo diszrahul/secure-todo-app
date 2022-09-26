@@ -1,14 +1,15 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Platform, Alert } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Platform, Alert, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Task from '../../components/Task';
 
 function Todo() {
-    const [task, setTask] = useState();
+    const [task, setTask] = useState({title: '', description: '', type: 'pending'});
     const [taskItems, setTaskItems] = useState([]);
     const [nullError, setNullError] = useState(false);
+    const [activeTab, setActiveTab] = useState('pending');
     const didMount = useRef(false);
-    const STORAGE_KEY = '@OKOK'
+    const STORAGE_KEY = '@OK1'
 
     const storeData = async (value) => {
         try {
@@ -21,7 +22,6 @@ function Todo() {
     
       useEffect(()=>{
         // Add data to the async storage
-        // Return early, if this is the first render:
         
         if(taskItems && didMount.current){
             storeData(taskItems)
@@ -53,13 +53,13 @@ function Todo() {
   
 
     const handleAddTask = () => {
-        if(!task){
+        if(!task || task.title == ''){
            setNullError(true)
            return false
         }
         Keyboard.dismiss();
         setTaskItems([...taskItems, task])
-        setTask(null);
+        setTask({title: '', description: '', type: 'pending'});
       }
     
       const removeTask = (index) => {
@@ -79,14 +79,19 @@ function Todo() {
       }
 
       const changeText = (text) => {
-        setTask(text)
+        let task = {
+          title: text,
+          description: '',
+          type: 'pending'
+        }
+        setTask(task)
         setNullError(false)
       }
 
       const renderUserInputArea = () => {
         return (
             <View style={styles.userInputView}>
-                 <TextInput style={styles.input} placeholder={'Write a task'} value={task} onChangeText={text => changeText(text)} />
+                 <TextInput style={styles.input} placeholder={'Write a task'} value={task?.title} onChangeText={text => changeText(text)} />
                     <TouchableOpacity onPress={() => handleAddTask()}>
                     <View style={styles.addWrapper}>
                         <Text style={styles.addText}>+</Text>
@@ -108,15 +113,49 @@ function Todo() {
             return (
                 taskItems.map((item, index) => {
                     return (
-                        <Task text={item} key={index} removeItem={removeTask}  /> 
+                        <Task text={item.title} key={index} removeItem={removeTask}  /> 
                     )
                   })
             )  
         }
       }
 
+      const getTabTextStyle = (active) => {
+          if(active){
+            return {color: '#fff'}
+          } else {
+            return {color: '#0052cc'}
+          }
+      }
+
+      const getTabButtonStyle = (active)  => {
+          if(active){
+            return {borderColor: '#0052cc', backgroundColor: '#0052cc'}
+          } else {
+            return {borderColor: '#0052cc'}
+          }
+      }
+
+      const renderTabs = () => {
+        return(
+          <View style={{flexDirection: 'row', marginTop: 20, paddingHorizontal: 20}}>
+              <TouchableOpacity style={[styles.tabButtons, getTabButtonStyle(activeTab == 'pending'? true: false)]} 
+                    onPress={()=>{setActiveTab('pending')}}>
+                    <Text style={getTabTextStyle(activeTab == 'pending'? true: false)}>Pending</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.tabButtons, getTabButtonStyle(activeTab == 'completed'? true: false)]} 
+                    onPress={()=>{setActiveTab('completed')}}>
+                    <Text style={getTabTextStyle(activeTab == 'completed'? true: false)}>Completed</Text>
+              </TouchableOpacity>
+        </View>
+        )
+      }
+
     return (
         <View style={styles.container}>
+
+          {renderTabs()}
+
         {/* Added this scroll view to enable scrolling when list gets longer than the page */}
         <ScrollView
           contentContainerStyle={{
@@ -213,6 +252,15 @@ function Todo() {
       },
       errorText: {
         marginLeft: 20
+      },
+      tabButtons: {
+        flex: 1, 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderRadius: 20,
+        marginHorizontal: 10,
+        paddingVertical: 10
       }
   });
 

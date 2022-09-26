@@ -1,32 +1,36 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Platform, Alert } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput,
+   TouchableOpacity, Keyboard, ScrollView, Platform, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Task from '../../components/Task';
+import COLORS from '../../constants/Colors';
+import TEXTS from '../../constants/Texts';
+import uuid from 'react-native-uuid';
 
 function Todo() {
-    const [task, setTask] = useState();
+    const [task, setTask] = useState({title: '', description: '', type: TEXTS.activeTab.pending, ID: ''});
     const [taskItems, setTaskItems] = useState([]);
     const [nullError, setNullError] = useState(false);
+    const [activeTab, setActiveTab] = useState(TEXTS.activeTab.pending);
     const didMount = useRef(false);
-    const STORAGE_KEY = '@OKOK'
 
+    // For persisting the todos 
     const storeData = async (value) => {
         try {
           const jsonValue = JSON.stringify(value)
-          await AsyncStorage.setItem(STORAGE_KEY, jsonValue)
+          await AsyncStorage.setItem(TEXTS.STORAGE_KEY, jsonValue)
         } catch (e) {
-          // saving error
+          // TODO: handle error
         }
       }
     
       useEffect(()=>{
-        // Add data to the async storage
-        // Return early, if this is the first render:
-        
+        // used ref here, as we don't the storing of data on first render
         if(taskItems && didMount.current){
             storeData(taskItems)
         }
         
+        // setting the ref to false
         if (!didMount.current) {
             didMount.current = true;
        }
@@ -41,52 +45,73 @@ function Todo() {
     // Sets the data from async storage into state
     const getData = async () => {
         try {
-        const data = await AsyncStorage.getItem(STORAGE_KEY)
+        const data = await AsyncStorage.getItem(TEXTS.STORAGE_KEY)
         if(data && data.length > 0) {
             // value previously stored
             setTaskItems(JSON.parse(data))
         }
         } catch(e) {
-        // error reading value
+        // TODO: handle error
         }
     }
   
-
+    // On click of add button
     const handleAddTask = () => {
-        if(!task){
+        if(!task || task.title == ''){
            setNullError(true)
            return false
         }
         Keyboard.dismiss();
         setTaskItems([...taskItems, task])
-        setTask(null);
+        setTask({title: '', description: '', type: TEXTS.activeTab.pending, ID: ''});
       }
-    
-      const removeTask = (index) => {
+      
+      /*
+      @input: id as uuid
+      */
+      const removeTask = (id) => {
         let itemsCopy = [...taskItems];
+        let obj = itemsCopy.find(o => o.ID === id);
+        let index = itemsCopy.indexOf(obj)
+
         itemsCopy.splice(index, 1);
         setTaskItems(itemsCopy)
       }
-
+      
+      /*
+      @output: JSX
+      */
       const renderNullError = () => {
         if(nullError){
             return (<View style={styles.errorView}>
-                <Text style={styles.errorText}>Please enter a valid text</Text>
+                <Text style={styles.errorText}>{TEXTS.errors.nullError}</Text>
             </View>)
         } else {
             return null
         }
       }
 
+      /*
+      @input: string
+      */
       const changeText = (text) => {
-        setTask(text)
+        let task = {
+          title: text,
+          description: '',
+          type: TEXTS.activeTab.pending,
+          ID: uuid.v4()
+        }
+        setTask(task)
         setNullError(false)
       }
 
+      /*
+      @output: JSX
+      */
       const renderUserInputArea = () => {
         return (
             <View style={styles.userInputView}>
-                 <TextInput style={styles.input} placeholder={'Write a task'} value={task} onChangeText={text => changeText(text)} />
+                 <TextInput style={styles.input} placeholder={TEXTS.placeholders.todoInput} value={task?.title} onChangeText={text => changeText(text)} />
                     <TouchableOpacity onPress={() => handleAddTask()}>
                     <View style={styles.addWrapper}>
                         <Text style={styles.addText}>+</Text>
@@ -98,26 +123,108 @@ function Todo() {
 
       const deleteAll = () => {
         setTaskItems([])
-        AsyncStorage.removeItem(STORAGE_KEY);
+        AsyncStorage.removeItem(TEXTS.STORAGE_KEY);
       }
 
+      /*
+      @input: id as uuid
+      */
+      const handleCheckBox = (id) =>{
+        let itemsCopy = [...taskItems];
+        let obj = itemsCopy.find(o => o.ID === id);
+        let index = itemsCopy.indexOf(obj)
+
+        if(itemsCopy[index].type == TEXTS.activeTab.completed){
+            itemsCopy[index].type = TEXTS.activeTab.pending
+        } else {
+            itemsCopy[index].type = TEXTS.activeTab.completed
+        }
+        setTaskItems(itemsCopy)
+      }
+
+      /*
+      @output: JSX
+      */
       const renderTasks = () => {
         if(!taskItems || taskItems.length == 0){
             return null
         } else{
-            console.log('++++++++++++++++++++', taskItems, taskItems.length)
             return (
                 taskItems.map((item, index) => {
+                  if(activeTab == TEXTS.activeTab.pending && item.type == TEXTS.activeTab.pending){
                     return (
-                        <Task text={item} key={index} removeItem={removeTask}  /> 
+                      <Task handleCheckBox = {handleCheckBox} item={item} key={index} removeItem={removeTask}  /> 
                     )
+                  } else if(activeTab == TEXTS.activeTab.completed && item.type == TEXTS.activeTab.completed){
+                    return (
+                      <Task handleCheckBox = {handleCheckBox} item={item} key={index} removeItem={removeTask}  /> 
+                    )
+                  }
+                   
                   })
             )  
         }
       }
 
+      /*
+      @input: boolean
+      @output: JSX
+      */
+      const getTabTextStyle = (active) => {
+          if(active){
+            return {color: COLORS.whiteColor}
+          } else {
+            return {color: COLORS.primaryColor}
+          }
+      }
+
+      /*
+      @input: boolean
+      @output: JSX
+      */
+      const getTabButtonStyle = (active)  => {
+          if(active){
+            return {borderColor: COLORS.primaryColor, backgroundColor: COLORS.primaryColor}
+          } else {
+            return {borderColor: COLORS.primaryColor}
+          }
+      }
+
+      /*
+      @output: JSX
+      */
+      const renderTabs = () => {
+        return(
+          <View style={{flexDirection: 'row', marginTop: 20, paddingHorizontal: 20}}>
+              <TouchableOpacity style={[styles.tabButtons, getTabButtonStyle(activeTab == TEXTS.activeTab.pending? true: false)]} 
+                    onPress={()=>{setActiveTab(TEXTS.activeTab.pending)}}>
+                    <Text style={getTabTextStyle(activeTab == TEXTS.activeTab.pending? true: false)}>{TEXTS.activeTab.pending}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.tabButtons, getTabButtonStyle(activeTab == TEXTS.activeTab.completed? true: false)]} 
+                    onPress={()=>{setActiveTab(TEXTS.activeTab.completed)}}>
+                    <Text style={getTabTextStyle(activeTab == TEXTS.activeTab.completed? true: false)}>{TEXTS.activeTab.completed}</Text>
+              </TouchableOpacity>
+        </View>
+        )
+      }
+
+      /*
+      @output: String
+      */
+      const getHeading = () => {
+        if(activeTab == TEXTS.activeTab.pending){
+          return TEXTS.headings.todaysTask
+        } else {
+          return TEXTS.headings.completedTasks
+        }
+      }
+    
+    // Main rendering of TODO
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
+
+          {renderTabs()}
+
         {/* Added this scroll view to enable scrolling when list gets longer than the page */}
         <ScrollView
           contentContainerStyle={{
@@ -129,7 +236,7 @@ function Todo() {
         {/* Today's Tasks */}
         <View style={styles.tasksWrapper}>
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <Text style={styles.sectionTitle}>Today's tasks</Text>
+            <Text style={styles.sectionTitle}>{getHeading()}</Text>
             <TouchableOpacity onPress={()=>{deleteAll()}}>
                 <Text>Delete</Text>
             </TouchableOpacity>
@@ -157,18 +264,21 @@ function Todo() {
 
       </KeyboardAvoidingView>
 
-        </View>
+        </SafeAreaView>
     );
   }
 
 
   const styles = StyleSheet.create({
+    safeContainer: {
+      flex: 1,
+    },
     container: {
         flex: 1,
         backgroundColor: '#E8EAED',
       },
       tasksWrapper: {
-        paddingTop: 80,
+        paddingTop: 30,
         paddingHorizontal: 20,
       },
       sectionTitle: {
@@ -185,7 +295,7 @@ function Todo() {
       input: {
         paddingVertical: 15,
         paddingHorizontal: 15,
-        backgroundColor: '#FFF',
+        backgroundColor: COLORS.whiteColor,
         borderRadius: 60,
         borderColor: '#C0C0C0',
         borderWidth: 1,
@@ -194,7 +304,7 @@ function Todo() {
       addWrapper: {
         width: 60,
         height: 60,
-        backgroundColor: '#FFF',
+        backgroundColor: COLORS.whiteColor,
         borderRadius: 60,
         justifyContent: 'center',
         alignItems: 'center',
@@ -214,6 +324,15 @@ function Todo() {
       },
       errorText: {
         marginLeft: 20
+      },
+      tabButtons: {
+        flex: 1, 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderRadius: 20,
+        marginHorizontal: 10,
+        paddingVertical: 10
       }
   });
 

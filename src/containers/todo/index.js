@@ -106,15 +106,32 @@ function Todo() {
         AsyncStorage.removeItem(STORAGE_KEY);
       }
 
+      const handleCheckBox = (index) =>{
+        let itemsCopy = [...taskItems];
+        if(itemsCopy[index].type == 'completed'){
+            itemsCopy[index].type = 'pending'
+        } else {
+            itemsCopy[index].type = 'completed'
+        }
+        setTaskItems(itemsCopy)
+      }
+
       const renderTasks = () => {
         if(!taskItems || taskItems.length == 0){
             return null
         } else{
             return (
                 taskItems.map((item, index) => {
+                  if(activeTab == 'pending' && item.type == 'pending'){
                     return (
-                        <Task text={item.title} key={index} removeItem={removeTask}  /> 
+                      <Task handleCheckBox = {handleCheckBox} item={item} key={index} id={index} removeItem={removeTask}  /> 
                     )
+                  } else if(activeTab == 'completed' && item.type == 'completed'){
+                    return (
+                      <Task handleCheckBox = {handleCheckBox} item={item} key={index} id={index} removeItem={removeTask}  /> 
+                    )
+                  }
+                   
                   })
             )  
         }

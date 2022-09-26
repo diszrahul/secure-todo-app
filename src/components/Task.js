@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Checkbox from 'expo-checkbox';
+import TEXTS from '../constants/Texts';
 
 const Task = (props) => {
   const {item, id} = props
   let checkValue = false
   if(item && item.type){
-      if(item.type == 'completed'){
+      if(item.type == TEXTS.activeTab.completed){
         checkValue = true
       } else {
         checkValue = false

@@ -1,20 +1,22 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Platform, Alert, Button } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput,
+   TouchableOpacity, Keyboard, ScrollView, Platform, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Task from '../../components/Task';
+import COLORS from '../../constants/Colors';
+import TEXTS from '../../constants/Texts';
 
 function Todo() {
-    const [task, setTask] = useState({title: '', description: '', type: 'pending'});
+    const [task, setTask] = useState({title: '', description: '', type: TEXTS.activeTab.pending});
     const [taskItems, setTaskItems] = useState([]);
     const [nullError, setNullError] = useState(false);
-    const [activeTab, setActiveTab] = useState('pending');
+    const [activeTab, setActiveTab] = useState(TEXTS.activeTab.pending);
     const didMount = useRef(false);
-    const STORAGE_KEY = '@OK1'
 
     const storeData = async (value) => {
         try {
           const jsonValue = JSON.stringify(value)
-          await AsyncStorage.setItem(STORAGE_KEY, jsonValue)
+          await AsyncStorage.setItem(TEXTS.STORAGE_KEY, jsonValue)
         } catch (e) {
           // saving error
         }
@@ -41,7 +43,7 @@ function Todo() {
     // Sets the data from async storage into state
     const getData = async () => {
         try {
-        const data = await AsyncStorage.getItem(STORAGE_KEY)
+        const data = await AsyncStorage.getItem(TEXTS.STORAGE_KEY)
         if(data && data.length > 0) {
             // value previously stored
             setTaskItems(JSON.parse(data))
@@ -59,7 +61,7 @@ function Todo() {
         }
         Keyboard.dismiss();
         setTaskItems([...taskItems, task])
-        setTask({title: '', description: '', type: 'pending'});
+        setTask({title: '', description: '', type: TEXTS.activeTab.pending});
       }
     
       const removeTask = (index) => {
@@ -71,7 +73,7 @@ function Todo() {
       const renderNullError = () => {
         if(nullError){
             return (<View style={styles.errorView}>
-                <Text style={styles.errorText}>Please enter a valid text</Text>
+                <Text style={styles.errorText}>{TEXTS.errors.nullError}</Text>
             </View>)
         } else {
             return null
@@ -82,7 +84,7 @@ function Todo() {
         let task = {
           title: text,
           description: '',
-          type: 'pending'
+          type: TEXTS.activeTab.pending
         }
         setTask(task)
         setNullError(false)
@@ -91,7 +93,7 @@ function Todo() {
       const renderUserInputArea = () => {
         return (
             <View style={styles.userInputView}>
-                 <TextInput style={styles.input} placeholder={'Write a task'} value={task?.title} onChangeText={text => changeText(text)} />
+                 <TextInput style={styles.input} placeholder={TEXTS.placeholders.todoInput} value={task?.title} onChangeText={text => changeText(text)} />
                     <TouchableOpacity onPress={() => handleAddTask()}>
                     <View style={styles.addWrapper}>
                         <Text style={styles.addText}>+</Text>
@@ -103,15 +105,15 @@ function Todo() {
 
       const deleteAll = () => {
         setTaskItems([])
-        AsyncStorage.removeItem(STORAGE_KEY);
+        AsyncStorage.removeItem(TEXTS.STORAGE_KEY);
       }
 
       const handleCheckBox = (index) =>{
         let itemsCopy = [...taskItems];
-        if(itemsCopy[index].type == 'completed'){
-            itemsCopy[index].type = 'pending'
+        if(itemsCopy[index].type == TEXTS.activeTab.completed){
+            itemsCopy[index].type = TEXTS.activeTab.pending
         } else {
-            itemsCopy[index].type = 'completed'
+            itemsCopy[index].type = TEXTS.activeTab.completed
         }
         setTaskItems(itemsCopy)
       }
@@ -122,11 +124,11 @@ function Todo() {
         } else{
             return (
                 taskItems.map((item, index) => {
-                  if(activeTab == 'pending' && item.type == 'pending'){
+                  if(activeTab == TEXTS.activeTab.pending && item.type == TEXTS.activeTab.pending){
                     return (
                       <Task handleCheckBox = {handleCheckBox} item={item} key={index} id={index} removeItem={removeTask}  /> 
                     )
-                  } else if(activeTab == 'completed' && item.type == 'completed'){
+                  } else if(activeTab == TEXTS.activeTab.completed && item.type == TEXTS.activeTab.completed){
                     return (
                       <Task handleCheckBox = {handleCheckBox} item={item} key={index} id={index} removeItem={removeTask}  /> 
                     )
@@ -139,37 +141,45 @@ function Todo() {
 
       const getTabTextStyle = (active) => {
           if(active){
-            return {color: '#fff'}
+            return {color: COLORS.whiteColor}
           } else {
-            return {color: '#0052cc'}
+            return {color: COLORS.primaryColor}
           }
       }
 
       const getTabButtonStyle = (active)  => {
           if(active){
-            return {borderColor: '#0052cc', backgroundColor: '#0052cc'}
+            return {borderColor: COLORS.primaryColor, backgroundColor: COLORS.primaryColor}
           } else {
-            return {borderColor: '#0052cc'}
+            return {borderColor: COLORS.primaryColor}
           }
       }
 
       const renderTabs = () => {
         return(
           <View style={{flexDirection: 'row', marginTop: 20, paddingHorizontal: 20}}>
-              <TouchableOpacity style={[styles.tabButtons, getTabButtonStyle(activeTab == 'pending'? true: false)]} 
-                    onPress={()=>{setActiveTab('pending')}}>
-                    <Text style={getTabTextStyle(activeTab == 'pending'? true: false)}>Pending</Text>
+              <TouchableOpacity style={[styles.tabButtons, getTabButtonStyle(activeTab == TEXTS.activeTab.pending? true: false)]} 
+                    onPress={()=>{setActiveTab(TEXTS.activeTab.pending)}}>
+                    <Text style={getTabTextStyle(activeTab == TEXTS.activeTab.pending? true: false)}>{TEXTS.activeTab.pending}</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.tabButtons, getTabButtonStyle(activeTab == 'completed'? true: false)]} 
-                    onPress={()=>{setActiveTab('completed')}}>
-                    <Text style={getTabTextStyle(activeTab == 'completed'? true: false)}>Completed</Text>
+              <TouchableOpacity style={[styles.tabButtons, getTabButtonStyle(activeTab == TEXTS.activeTab.completed? true: false)]} 
+                    onPress={()=>{setActiveTab(TEXTS.activeTab.completed)}}>
+                    <Text style={getTabTextStyle(activeTab == TEXTS.activeTab.completed? true: false)}>{TEXTS.activeTab.completed}</Text>
               </TouchableOpacity>
         </View>
         )
       }
 
+      const getHeading = () => {
+        if(activeTab == TEXTS.activeTab.pending){
+          return TEXTS.headings.todaysTask
+        } else {
+          return TEXTS.headings.completedTasks
+        }
+      }
+
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
 
           {renderTabs()}
 
@@ -184,7 +194,7 @@ function Todo() {
         {/* Today's Tasks */}
         <View style={styles.tasksWrapper}>
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <Text style={styles.sectionTitle}>Today's tasks</Text>
+            <Text style={styles.sectionTitle}>{getHeading()}</Text>
             <TouchableOpacity onPress={()=>{deleteAll()}}>
                 <Text>Delete</Text>
             </TouchableOpacity>
@@ -212,18 +222,21 @@ function Todo() {
 
       </KeyboardAvoidingView>
 
-        </View>
+        </SafeAreaView>
     );
   }
 
 
   const styles = StyleSheet.create({
+    safeContainer: {
+      flex: 1,
+    },
     container: {
         flex: 1,
         backgroundColor: '#E8EAED',
       },
       tasksWrapper: {
-        paddingTop: 80,
+        paddingTop: 30,
         paddingHorizontal: 20,
       },
       sectionTitle: {
@@ -240,7 +253,7 @@ function Todo() {
       input: {
         paddingVertical: 15,
         paddingHorizontal: 15,
-        backgroundColor: '#FFF',
+        backgroundColor: COLORS.whiteColor,
         borderRadius: 60,
         borderColor: '#C0C0C0',
         borderWidth: 1,
@@ -249,7 +262,7 @@ function Todo() {
       addWrapper: {
         width: 60,
         height: 60,
-        backgroundColor: '#FFF',
+        backgroundColor: COLORS.whiteColor,
         borderRadius: 60,
         justifyContent: 'center',
         alignItems: 'center',

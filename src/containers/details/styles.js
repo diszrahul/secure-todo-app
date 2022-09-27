@@ -49,7 +49,14 @@ container: {
     paddingVertical: 10,
     width: windowWidth*0.8,
     marginTop: 20
-  }
+  },
+  errorView: {
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+  },
+  errorText: {
+    color: 'red'
+  },
 })
 
 export default styles;

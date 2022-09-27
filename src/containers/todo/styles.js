@@ -66,7 +66,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
       },
       errorText: {
-        marginLeft: 20
+        marginLeft: 20,
+        color: 'red'
       },
       tabButtons: {
         flex: 1, 

@@ -27,7 +27,7 @@ container: {
     borderColor: COLORS.primaryColor
   },
   descInput: {
-    height: 150,
+    height: windowWidth,
     width: windowWidth*0.8,
     marginBottom: 12,
     marginTop: 5,

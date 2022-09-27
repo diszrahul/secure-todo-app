@@ -6,6 +6,7 @@ import Task from '../../components/Task';
 import COLORS from '../../constants/Colors';
 import TEXTS from '../../constants/Texts';
 import uuid from 'react-native-uuid';
+import {getFormattedDate} from '../../utils/Helpers.js';
 
 function Todo() {
     const initialTask = {title: '', description: '', type: TEXTS.activeTab.pending, ID: ''}
@@ -122,6 +123,7 @@ function Todo() {
         )
       }
 
+      // Delete all items and removes scope from async storage as well
       const deleteAll = () => {
         setTaskItems([])
         AsyncStorage.removeItem(TEXTS.STORAGE_KEY);
@@ -220,31 +222,12 @@ function Todo() {
         }
       }
 
-      const getFormattedDate = () => {
-        Date.prototype.toShortFormat = function() {
-
-          let monthNames =["Jan","Feb","Mar","Apr",
-                            "May","Jun","Jul","Aug",
-                            "Sep", "Oct","Nov","Dec"];
-          
-          let day = this.getDate();
-          
-          let monthIndex = this.getMonth();
-          let monthName = monthNames[monthIndex];
-          
-          return `${day} ${monthName}`;  
-      }
-
-      let today = new Date()
-      return today.toShortFormat()
-      }
-
       /*
       @output: JSX
       */
       const renderHeader = () => {
           return (
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 20}}>
+            <View style={styles.headerView}>
                 <View>
                       <View>
                             <Text>Welcome Back,</Text>
@@ -254,12 +237,26 @@ function Todo() {
                       </View>
                 </View>
 
-                <View style={{backgroundColor: COLORS.whiteColor, borderRadius: 8, justifyContent: 'center', alignItems: 'center', padding: 5}}>
+                <View style={styles.dateView}>
                       <Text>{getFormattedDate()}</Text>
                 </View>
             </View>
           )
       }
+    
+    /*
+      @output: JSX
+    */
+    const renderDeleteAll = () => {
+      return (
+        <View style={styles.deleteAllView}>
+                <Text style={styles.sectionTitle}>{getHeading()}</Text>
+                <TouchableOpacity onPress={()=>{deleteAll()}}>
+                    <Text>Delete</Text>
+                </TouchableOpacity>
+          </View>
+      )
+    }
     
     // Main rendering of TODO
     return (
@@ -277,38 +274,35 @@ function Todo() {
           keyboardShouldPersistTaps='handled'
         >
   
-        {/* Today's Tasks */}
-        <View style={styles.tasksWrapper}>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <Text style={styles.sectionTitle}>{getHeading()}</Text>
-            <TouchableOpacity onPress={()=>{deleteAll()}}>
-                <Text>Delete</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <View style={styles.items}>
-            {/* This is where the tasks will go! */}
+              {/* Today's Tasks */}
+              <View style={styles.tasksWrapper}>
 
-            {renderTasks()}
-          </View>
-        </View>
+                    {/* delete All */}
+                    {renderDeleteAll()}
+                    
+                    {/* All TODOs will render here */}
+                    <View style={styles.items}>
+                          {renderTasks()}
+                    </View>
+
+              </View>
           
         </ScrollView>
 
-    {/* Write a task */}
-      {/* Uses a keyboard avoiding view which ensures the keyboard does not cover the items on screen */}
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.writeTaskWrapper}
-      >
+        {/* Write a task */}
+          {/* Uses a keyboard avoiding view which ensures the keyboard does not cover the items on screen */}
+          <KeyboardAvoidingView 
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.writeTaskWrapper}
+          >
 
-        {renderNullError()}
-        
-        {renderUserInputArea()}
+            {renderNullError()}
+            
+            {renderUserInputArea()}
 
-      </KeyboardAvoidingView>
+          </KeyboardAvoidingView>
 
-        </SafeAreaView>
+      </SafeAreaView>
     );
   }
 
@@ -318,6 +312,19 @@ function Todo() {
         flex: 1,
         backgroundColor: '#E8EAED',
         paddingTop: 20
+      },
+      headerView: {
+        flexDirection: 'row', 
+        justifyContent: 'space-between', 
+        paddingHorizontal: 20, 
+        paddingTop: 20
+      },
+      dateView: {
+        backgroundColor: COLORS.whiteColor,
+        borderRadius: 8, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        padding: 5
       },
       tasksWrapper: {
         paddingTop: 30,
@@ -332,7 +339,7 @@ function Todo() {
       },
       writeTaskWrapper: {
         position: 'absolute',
-        bottom: 60,
+        bottom: 20,
       },
       input: {
         paddingVertical: 15,
@@ -375,6 +382,11 @@ function Todo() {
         borderRadius: 20,
         marginHorizontal: 10,
         paddingVertical: 10
+      },
+      deleteAllView: {
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        justifyContent: 'space-between'
       }
   });
 

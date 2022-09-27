@@ -1,17 +1,25 @@
 import React from 'react';
-import {Text, View } from 'react-native';
+import {Text, TouchableOpacity, View, Image } from 'react-native';
 import styles from './styles';
 import {getFormattedDate} from '../../utils/helpers'
+import BackIcon from '../../assets/backIcon.svg'
+import COLORS from '../../constants/Colors';
 
-      export const renderHeader = () => {
+ const renderHeader = (props) => {
         return (
           <View style={styles.headerView}>
               <View>
+                   {props.backButton?
+                    <TouchableOpacity style={{marginBottom: 10, marginLeft: -5}} onPress={()=>{props.handleBack()}} >
+                        <BackIcon color={COLORS.primaryColor} height={20} width={20}/>
+                    </TouchableOpacity>: 
+                    null}
+
                     <View>
-                          <Text>Welcome Back,</Text>
+                          <Text>{props.preHeading}</Text>
                     </View>
                     <View>
-                          <Text style={{fontSize: 20, fontWeight: '800'}}>James Sullivan</Text>
+                          <Text style={{fontSize: 20, fontWeight: '800'}}>{props.heading}</Text>
                     </View>
               </View>
 
@@ -21,3 +29,5 @@ import {getFormattedDate} from '../../utils/helpers'
           </View>
         )
     }
+
+export default renderHeader

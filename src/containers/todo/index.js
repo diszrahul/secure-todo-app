@@ -7,9 +7,9 @@ import COLORS from '../../constants/Colors';
 import TEXTS from '../../constants/Texts';
 import uuid from 'react-native-uuid';
 import styles from './styles';
-import {renderHeader} from '../../components/header/header'
+import Header from '../../components/header/header'
 
-function Todo() {
+function Todo({route, navigation}) {
     const initialTask = {title: '', description: '', type: TEXTS.activeTab.pending, ID: ''}
     const [task, setTask] = useState(initialTask);
     const [taskItems, setTaskItems] = useState([]);
@@ -27,6 +27,10 @@ function Todo() {
           // TODO: handle error
         }
       }
+
+      useEffect(()=> {
+        getData()
+      },[route.params])
     
       useEffect(()=>{
         // used ref here, as we don't the storing of data on first render
@@ -43,7 +47,7 @@ function Todo() {
 
     //  Get data from async storage
       useEffect(()=>{
-        getData(taskItems)
+        getData()
       },[])
     
     // Sets the data from async storage into state
@@ -170,6 +174,14 @@ function Todo() {
         )  
       }
 
+      const handleTaskPressed = (id) => {
+        let itemsCopy = [...taskItems];
+        let obj = itemsCopy.find(o => o.ID === id);
+        
+
+        navigation.navigate('details', {detailObj: obj})
+      }
+
       /*
       @output: JSX
       */
@@ -187,7 +199,7 @@ function Todo() {
        })
 
       //  Check if we need to 'Nothing to show' instead
-        if(!taskItems || taskItems.length == 0 || (activeTab == TEXTS.activeTab.pending && pendingItems.length == 0) ||
+        if(!taskItems || taskItems.length == 0 || (activeTab == TEXTS.activeTab.pending && pendingItems.length == 0) || 
         (activeTab == TEXTS.activeTab.completed && completedItems.length == 0)){
             return renderNothingToShow()
         } else{
@@ -195,11 +207,11 @@ function Todo() {
                 taskItems.map((item, index) => {
                   if(activeTab == TEXTS.activeTab.pending && item.type == TEXTS.activeTab.pending){
                     return (
-                      <Task handleCheckBox = {handleCheckBox} item={item} key={index} removeItem={removeTask}  /> 
+                      <Task taskPressed={handleTaskPressed} handleCheckBox = {handleCheckBox} item={item} key={index} removeItem={removeTask}  /> 
                     )
                   } else if(activeTab == TEXTS.activeTab.completed && item.type == TEXTS.activeTab.completed){
                     return (
-                      <Task handleCheckBox = {handleCheckBox} item={item} key={index} removeItem={removeTask}  /> 
+                      <Task taskPressed={handleTaskPressed} handleCheckBox = {handleCheckBox} item={item} key={index} removeItem={removeTask}  /> 
                     )
                   }
                    
@@ -279,7 +291,11 @@ function Todo() {
     return (
         <SafeAreaView style={styles.container}>
 
-          {renderHeader()}
+          <Header
+            backButton= {false}
+            preHeading='Welcome back,'
+            heading="James Sullivan"
+          />
 
           {renderTabs()}
 

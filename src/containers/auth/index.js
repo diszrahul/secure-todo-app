@@ -18,7 +18,8 @@ export default function Auth({navigation}) {
   })
 
   const fallBackToDefaultAuth = () => {
-    Alert.alert('ID and Password feature coming soon!')
+    Alert.alert('Granting access for evaulating the app(Else on emulator user could have been stuck)')
+    navigation.navigate('todo')
   }
 
   const alertComponent = (title, message, buttonText, buttonFunction) => {

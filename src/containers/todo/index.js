@@ -1,11 +1,13 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput,
+import { KeyboardAvoidingView, Text, View, TextInput,
    TouchableOpacity, Keyboard, ScrollView, Platform, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Task from '../../components/Task';
+import Task from '../../components/task';
 import COLORS from '../../constants/Colors';
 import TEXTS from '../../constants/Texts';
 import uuid from 'react-native-uuid';
+import {getFormattedDate} from '../../utils/helpers.js';
+import styles from './styles';
 
 function Todo() {
     const initialTask = {title: '', description: '', type: TEXTS.activeTab.pending, ID: ''}
@@ -122,6 +124,7 @@ function Todo() {
         )
       }
 
+      // Delete all items and removes scope from async storage as well
       const deleteAll = () => {
         setTaskItems([])
         AsyncStorage.removeItem(TEXTS.STORAGE_KEY);
@@ -220,31 +223,12 @@ function Todo() {
         }
       }
 
-      const getFormattedDate = () => {
-        Date.prototype.toShortFormat = function() {
-
-          let monthNames =["Jan","Feb","Mar","Apr",
-                            "May","Jun","Jul","Aug",
-                            "Sep", "Oct","Nov","Dec"];
-          
-          let day = this.getDate();
-          
-          let monthIndex = this.getMonth();
-          let monthName = monthNames[monthIndex];
-          
-          return `${day} ${monthName}`;  
-      }
-
-      let today = new Date()
-      return today.toShortFormat()
-      }
-
       /*
       @output: JSX
       */
       const renderHeader = () => {
           return (
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 20}}>
+            <View style={styles.headerView}>
                 <View>
                       <View>
                             <Text>Welcome Back,</Text>
@@ -254,12 +238,26 @@ function Todo() {
                       </View>
                 </View>
 
-                <View style={{backgroundColor: COLORS.whiteColor, borderRadius: 8, justifyContent: 'center', alignItems: 'center', padding: 5}}>
+                <View style={styles.dateView}>
                       <Text>{getFormattedDate()}</Text>
                 </View>
             </View>
           )
       }
+    
+    /*
+      @output: JSX
+    */
+    const renderDeleteAll = () => {
+      return (
+        <View style={styles.deleteAllView}>
+                <Text style={styles.sectionTitle}>{getHeading()}</Text>
+                <TouchableOpacity onPress={()=>{deleteAll()}}>
+                    <Text>Delete</Text>
+                </TouchableOpacity>
+          </View>
+      )
+    }
     
     // Main rendering of TODO
     return (
@@ -277,105 +275,36 @@ function Todo() {
           keyboardShouldPersistTaps='handled'
         >
   
-        {/* Today's Tasks */}
-        <View style={styles.tasksWrapper}>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <Text style={styles.sectionTitle}>{getHeading()}</Text>
-            <TouchableOpacity onPress={()=>{deleteAll()}}>
-                <Text>Delete</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <View style={styles.items}>
-            {/* This is where the tasks will go! */}
+              {/* Today's Tasks */}
+              <View style={styles.tasksWrapper}>
 
-            {renderTasks()}
-          </View>
-        </View>
+                    {/* delete All */}
+                    {renderDeleteAll()}
+                    
+                    {/* All TODOs will render here */}
+                    <View style={styles.items}>
+                          {renderTasks()}
+                    </View>
+
+              </View>
           
         </ScrollView>
 
-    {/* Write a task */}
-      {/* Uses a keyboard avoiding view which ensures the keyboard does not cover the items on screen */}
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.writeTaskWrapper}
-      >
+        {/* Write a task */}
+          {/* Uses a keyboard avoiding view which ensures the keyboard does not cover the items on screen */}
+          <KeyboardAvoidingView 
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.writeTaskWrapper}
+          >
 
-        {renderNullError()}
-        
-        {renderUserInputArea()}
+            {renderNullError()}
+            
+            {renderUserInputArea()}
 
-      </KeyboardAvoidingView>
+          </KeyboardAvoidingView>
 
-        </SafeAreaView>
+      </SafeAreaView>
     );
   }
-
-
-  const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#E8EAED',
-        paddingTop: 20
-      },
-      tasksWrapper: {
-        paddingTop: 30,
-        paddingHorizontal: 20,
-      },
-      sectionTitle: {
-        fontSize: 24,
-        fontWeight: 'bold'
-      },
-      items: {
-        marginTop: 30,
-      },
-      writeTaskWrapper: {
-        position: 'absolute',
-        bottom: 60,
-      },
-      input: {
-        paddingVertical: 15,
-        paddingHorizontal: 15,
-        backgroundColor: COLORS.whiteColor,
-        borderRadius: 60,
-        borderColor: '#C0C0C0',
-        borderWidth: 1,
-        width: 250,
-      },
-      addWrapper: {
-        width: 60,
-        height: 60,
-        backgroundColor: COLORS.whiteColor,
-        borderRadius: 60,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderColor: '#C0C0C0',
-        borderWidth: 1,
-      },
-      addText: {},
-      userInputView: {
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center'
-      },
-      errorView: {
-        paddingVertical: 15,
-        paddingHorizontal: 15,
-      },
-      errorText: {
-        marginLeft: 20
-      },
-      tabButtons: {
-        flex: 1, 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        borderWidth: 1,
-        borderRadius: 20,
-        marginHorizontal: 10,
-        paddingVertical: 10
-      }
-  });
 
 export default Todo;

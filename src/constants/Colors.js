@@ -1,6 +1,7 @@
 const COLORS = {
     primaryColor: '#0052cc',
-    whiteColor: '#fff'
+    whiteColor: '#fff',
+    bgColorGrey: '#55BCF6'
   };
   
   export default COLORS;

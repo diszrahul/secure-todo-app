@@ -13,7 +13,8 @@ const styles = StyleSheet.create({
       borderRadius: 8, 
       justifyContent: 'center', 
       alignItems: 'center', 
-      padding: 5
+      padding: 5,
+      maxHeight: 40
     },
 });
 

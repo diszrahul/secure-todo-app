@@ -1,11 +1,13 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import { KeyboardAvoidingView, Text, View, TextInput,
-   TouchableOpacity, Keyboard, ScrollView, Platform, SafeAreaView } from 'react-native';
+   TouchableOpacity, Keyboard, Platform, SafeAreaView, BackHandler } from 'react-native';
 import styles from './styles';
 import Header from '../../components/header/header'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TEXTS from '../../constants/Texts';
 import COLORS from '../../constants/Colors';
+import { StatusBar } from 'expo-status-bar';
+import DismissKeyboard from '../../components/dismissKeyboard/DismissKeyboard';
 
    function Details({ route, navigation }) {
    const [todo, setTodo] = useState({})
@@ -16,6 +18,12 @@ import COLORS from '../../constants/Colors';
       setTodo(route.params.detailObj)
       getData()
    },[])
+
+  //  Prevents Backbutton press
+   useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => true)
+    return () => backHandler.remove()
+  }, [])
 
    // Sets the data from async storage into state
    const getData = async () => {
@@ -99,7 +107,8 @@ import COLORS from '../../constants/Colors';
             preHeading='Add details or edit:'
             heading= {route.params.detailObj.title}
             />
-            
+            <StatusBar style="light" backgroundColor={COLORS.primaryColor} />
+            <DismissKeyboard>
             <KeyboardAvoidingView 
             behavior={Platform.OS === "ios" ? "padding" : "height"}
            style={{flex: 1, marginTop: 20, paddingHorizontal: 20}}>
@@ -129,7 +138,7 @@ import COLORS from '../../constants/Colors';
                   </TouchableOpacity>
 
             </KeyboardAvoidingView>
-
+            </DismissKeyboard>
         </SafeAreaView>  
         )
    }

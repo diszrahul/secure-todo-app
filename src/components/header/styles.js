@@ -14,8 +14,14 @@ const styles = StyleSheet.create({
       justifyContent: 'center', 
       alignItems: 'center', 
       padding: 5,
-      maxHeight: 40
+      maxHeight: 40,
     },
+    backButton: {
+      marginBottom: 10, 
+      marginLeft: -5, 
+      flexDirection: 'row', 
+      alignItems: 'flex-end'
+    }
 });
 
 export default styles

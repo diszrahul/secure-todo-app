@@ -1,6 +1,7 @@
 import {StyleSheet, Dimensions} from 'react-native';
 import COLORS from '../../constants/Colors';
 let windowWidth = Dimensions.get('window').width;
+let logicalWidth = windowWidth * 0.9
 
 const styles = StyleSheet.create({
 container: {
@@ -16,7 +17,7 @@ container: {
   },
   titleInput: {
     height: 40,
-    width: windowWidth*0.8,
+    width: logicalWidth,
     marginTop: 5,
     marginBottom: 12,
     borderWidth: 1,
@@ -27,8 +28,8 @@ container: {
     borderColor: COLORS.primaryColor
   },
   descInput: {
-    height: windowWidth,
-    width: windowWidth*0.8,
+    height: logicalWidth*0.7,
+    width: logicalWidth,
     marginBottom: 12,
     marginTop: 5,
     borderWidth: 1,

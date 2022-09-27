@@ -174,7 +174,21 @@ function Todo() {
       @output: JSX
       */
       const renderTasks = () => {
-        if(!taskItems || taskItems.length == 0){
+       let pendingItems = []
+       let completedItems = []
+      
+      //  get the pending and completed items length
+       taskItems.map((items)=> {
+          if(items.type == TEXTS.activeTab.pending){
+            pendingItems.push(items)
+          } else if(items.type == TEXTS.activeTab.completed){
+            completedItems.push(items)
+          }
+       })
+
+      //  Check if we need to 'Nothing to show' instead
+        if(!taskItems || taskItems.length == 0 || (activeTab == TEXTS.activeTab.pending && pendingItems.length == 0) ||
+        (activeTab == TEXTS.activeTab.completed && completedItems.length == 0)){
             return renderNothingToShow()
         } else{
             return (

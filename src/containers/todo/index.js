@@ -1,12 +1,13 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput,
+import { KeyboardAvoidingView, Text, View, TextInput,
    TouchableOpacity, Keyboard, ScrollView, Platform, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Task from '../../components/Task';
+import Task from '../../components/task';
 import COLORS from '../../constants/Colors';
 import TEXTS from '../../constants/Texts';
 import uuid from 'react-native-uuid';
-import {getFormattedDate} from '../../utils/Helpers.js';
+import {getFormattedDate} from '../../utils/helpers.js';
+import styles from './styles';
 
 function Todo() {
     const initialTask = {title: '', description: '', type: TEXTS.activeTab.pending, ID: ''}
@@ -305,89 +306,5 @@ function Todo() {
       </SafeAreaView>
     );
   }
-
-
-  const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#E8EAED',
-        paddingTop: 20
-      },
-      headerView: {
-        flexDirection: 'row', 
-        justifyContent: 'space-between', 
-        paddingHorizontal: 20, 
-        paddingTop: 20
-      },
-      dateView: {
-        backgroundColor: COLORS.whiteColor,
-        borderRadius: 8, 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        padding: 5
-      },
-      tasksWrapper: {
-        paddingTop: 30,
-        paddingHorizontal: 20,
-      },
-      sectionTitle: {
-        fontSize: 24,
-        fontWeight: 'bold'
-      },
-      items: {
-        marginTop: 30,
-      },
-      writeTaskWrapper: {
-        position: 'absolute',
-        bottom: 20,
-      },
-      input: {
-        paddingVertical: 15,
-        paddingHorizontal: 15,
-        backgroundColor: COLORS.whiteColor,
-        borderRadius: 60,
-        borderColor: '#C0C0C0',
-        borderWidth: 1,
-        width: 250,
-      },
-      addWrapper: {
-        width: 60,
-        height: 60,
-        backgroundColor: COLORS.whiteColor,
-        borderRadius: 60,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderColor: '#C0C0C0',
-        borderWidth: 1,
-      },
-      addText: {},
-      userInputView: {
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center'
-      },
-      errorView: {
-        paddingVertical: 15,
-        paddingHorizontal: 15,
-      },
-      errorText: {
-        marginLeft: 20
-      },
-      tabButtons: {
-        flex: 1, 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        borderWidth: 1,
-        borderRadius: 20,
-        marginHorizontal: 10,
-        paddingVertical: 10
-      },
-      deleteAllView: {
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        justifyContent: 'space-between'
-      }
-  });
 
 export default Todo;

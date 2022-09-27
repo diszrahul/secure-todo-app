@@ -6,6 +6,7 @@ const TEXTS = {
     },
     errors: {
         nullError: 'Please enter a valid text',
+        updateError: 'Please enter a valid title'
     },
     placeholders: {
         todoInput: 'Write a task'

@@ -6,12 +6,15 @@ import Lottie from 'lottie-react-native';
 function Splash({navigation}){
 
     return(
-        <Lottie
-        autoPlay
-        loop={false}
-        source={require('../../assets/animation/splash.json')}
-        onAnimationFinish={()=>{navigation.navigate('auth')}}
-        />
+        <View style={{flex: 1}}>
+            <Lottie
+            autoPlay
+            loop={false}
+            source={require('../../assets/animation/splash.json')}
+            onAnimationFinish={()=>{navigation.navigate('auth')}}
+            />
+        </View>
+       
     )
 }
 export default Splash;

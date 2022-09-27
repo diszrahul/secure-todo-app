@@ -10,6 +10,7 @@ import COLORS from '../../constants/Colors';
    function Details({ route, navigation }) {
    const [todo, setTodo] = useState({})
    const [taskItems, setTaskItems] = useState([]);
+   const [updateError, setUpdateError] = useState(false);
    
    useEffect(()=>{
       setTodo(route.params.detailObj)
@@ -61,6 +62,11 @@ import COLORS from '../../constants/Colors';
       }
    
       const updateTodo = () => {
+          if(!todo || todo.title.length < 1){
+            setUpdateError(true)
+            return false
+          }
+          
          let itemsCopy = [...taskItems];
          let obj = itemsCopy.find(o => o.ID === todo.ID);
          let index = itemsCopy.indexOf(obj)
@@ -70,6 +76,19 @@ import COLORS from '../../constants/Colors';
          setTaskItems(itemsCopy)
          storeData(taskItems)
          Keyboard.dismiss()
+      }
+
+      /*
+      @output: JSX
+      */
+      const renderErrorView = () => {
+        if(updateError){
+            return (<View style={styles.errorView}>
+                <Text style={styles.errorText}>{TEXTS.errors.updateError}</Text>
+            </View>)
+        } else {
+            return null
+        }
       }
 
     return (
@@ -101,6 +120,8 @@ import COLORS from '../../constants/Colors';
                    autoCorrect= {false}
                    value={todo?.description}/>
                   
+                  {renderErrorView()}
+
                   <TouchableOpacity style={styles.update} 
                     onPress={()=>{updateTodo()}}>
                     <Text style={{color: COLORS.whiteColor}}>{`Update`}</Text>

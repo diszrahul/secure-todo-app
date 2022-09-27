@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import { KeyboardAvoidingView, Text, View, TextInput,
-   TouchableOpacity, Keyboard, ScrollView, Platform, SafeAreaView } from 'react-native';
+   TouchableOpacity, Keyboard, ScrollView, Platform, SafeAreaView, BackHandler } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Task from '../../components/task/task';
 import COLORS from '../../constants/Colors';
@@ -8,6 +8,7 @@ import TEXTS from '../../constants/Texts';
 import uuid from 'react-native-uuid';
 import styles from './styles';
 import Header from '../../components/header/header';
+import { StatusBar } from 'expo-status-bar';
 
 function Todo({route, navigation}) {
     const initialTask = {title: '', description: '', type: TEXTS.activeTab.pending, ID: ''}
@@ -29,6 +30,13 @@ function Todo({route, navigation}) {
         }
       }
 
+    //  Prevents Backbutton press
+    useEffect(() => {
+      const backHandler = BackHandler.addEventListener('hardwareBackPress', () => true)
+      return () => backHandler.remove()
+    }, [])
+
+    // When params change, get data again
       useEffect(()=> {
         getData()
       },[route.params])
@@ -317,7 +325,7 @@ function Todo({route, navigation}) {
     // Main rendering of TODO
     return (
         <SafeAreaView style={styles.container}>
-
+          <StatusBar style="light" backgroundColor={COLORS.primaryColor} />
           <Header
             backButton= {false}
             preHeading='Make yourself productive:'

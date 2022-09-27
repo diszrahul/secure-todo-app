@@ -8,7 +8,7 @@ export default function Auth({navigation}) {
 
   useEffect(()=>{
     const auth = LocalAuthentication.authenticateAsync({
-        promptMessage: 'Authenticate with Face ID',
+        promptMessage: 'Authenticate with Face ID/ Biometric/ Pattern',
         fallbackLabel: 'Enter password'
       });
       auth.then(result => {

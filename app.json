@@ -1,10 +1,11 @@
 {
   "expo": {
     "name": "todo",
-    "slug": "todo",
+    "slug": "secure-todo-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "owner": "diszrahul",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -24,10 +25,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.diszrahul.securetodoapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a7e675d8-9ec4-4644-a7f3-eef93d063b85"
+      }
     }
   }
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import TEXTS from '../constants/Texts';
+import DeleteIcon from '../assets/deleteIcon.svg'
 
 const Task = (props) => {
   const {item} = props
@@ -39,9 +40,9 @@ const Task = (props) => {
             <Text style={styles.itemText}>{props.item.title}</Text>
       </View>
 
-      <TouchableOpacity style={{flex: 0.5}} onPress={()=>{props.removeItem(item.ID)}}>
-            <View style={{flex: 1}}>
-                <Text>-</Text>
+      <TouchableOpacity testID='deleteIcon' style={{flex: 0.5}} onPress={()=>{props.removeItem(item.ID)}}>
+            <View style={{flex: 1, padding: 5}}>
+                <DeleteIcon width="15" height="15"/>
             </View>
       </TouchableOpacity>
     </View>

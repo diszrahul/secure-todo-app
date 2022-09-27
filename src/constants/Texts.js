@@ -13,7 +13,10 @@ const TEXTS = {
     headings: {
         todaysTask: `Today\'s tasks`,
         completedTasks: `Completed tasks`
-    }
+    },
+    nothingToShowTitle: `Nothing to show here`,
+    nothingToShowText1: `Start by Adding few items in`,
+    nothingToShowText2: `your todo list`
   };
   
   export default TEXTS;

@@ -16,6 +16,7 @@ function Todo() {
     const [nullError, setNullError] = useState(false);
     const [activeTab, setActiveTab] = useState(TEXTS.activeTab.pending);
     const didMount = useRef(false);
+    const inputRef = useRef(null);
 
     // For persisting the todos 
     const storeData = async (value) => {
@@ -114,12 +115,16 @@ function Todo() {
       const renderUserInputArea = () => {
         return (
             <View style={styles.userInputView}>
-                 <TextInput style={styles.input} placeholder={TEXTS.placeholders.todoInput} value={task?.title} onChangeText={text => changeText(text)} />
-                    <TouchableOpacity onPress={() => handleAddTask()}>
-                    <View style={styles.addWrapper}>
-                        <Text style={styles.addText}>+</Text>
-                    </View>
-                    </TouchableOpacity>
+                 <TextInput style={styles.input} placeholder={TEXTS.placeholders.todoInput}
+                  value={task?.title}
+                  onChangeText={text => changeText(text)}
+                  ref={inputRef}
+                  />
+                  <TouchableOpacity onPress={() => handleAddTask()}>
+                      <View style={styles.addWrapper}>
+                          <Text style={styles.addText}>+</Text>
+                      </View>
+                  </TouchableOpacity>
             </View>
         )
       }
@@ -149,9 +154,28 @@ function Todo() {
       /*
       @output: JSX
       */
+      const renderNothingToShow = () => {
+        return(
+          <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                <Text style={{fontSize: 22}}>{TEXTS.nothingToShowTitle}</Text>
+                <Text style={{fontSize: 15, marginTop: 5}}>{TEXTS.nothingToShowText1}</Text>
+                <Text style={{fontSize: 15}}>{TEXTS.nothingToShowText2}</Text>
+
+                <TouchableOpacity style={styles.createTodo} 
+                    onPress={()=>{inputRef.current.focus()}}>
+                    <Text style={{fontSize: 15, color: COLORS.whiteColor}}>{`Create a todo`}</Text>
+              </TouchableOpacity>
+
+          </View>
+        )  
+      }
+
+      /*
+      @output: JSX
+      */
       const renderTasks = () => {
         if(!taskItems || taskItems.length == 0){
-            return null
+            return renderNothingToShow()
         } else{
             return (
                 taskItems.map((item, index) => {

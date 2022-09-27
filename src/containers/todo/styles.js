@@ -81,6 +81,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row', 
         alignItems: 'center', 
         justifyContent: 'space-between'
+      },
+      createTodo: {
+        marginTop: 15,
+        borderRadius: 20,
+        backgroundColor: COLORS.primaryColor,
+        paddingVertical: 10,
+        paddingHorizontal: 20
       }
   });
 

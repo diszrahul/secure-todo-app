@@ -2,20 +2,21 @@ import React, {useState, useEffect, useRef} from 'react';
 import { KeyboardAvoidingView, Text, View, TextInput,
    TouchableOpacity, Keyboard, ScrollView, Platform, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Task from '../../components/task';
+import Task from '../../components/task/task';
 import COLORS from '../../constants/Colors';
 import TEXTS from '../../constants/Texts';
 import uuid from 'react-native-uuid';
-import {getFormattedDate} from '../../utils/helpers.js';
 import styles from './styles';
+import Header from '../../components/header/header'
 
-function Todo() {
+function Todo({route, navigation}) {
     const initialTask = {title: '', description: '', type: TEXTS.activeTab.pending, ID: ''}
     const [task, setTask] = useState(initialTask);
     const [taskItems, setTaskItems] = useState([]);
     const [nullError, setNullError] = useState(false);
     const [activeTab, setActiveTab] = useState(TEXTS.activeTab.pending);
     const didMount = useRef(false);
+    const inputRef = useRef(null);
 
     // For persisting the todos 
     const storeData = async (value) => {
@@ -26,6 +27,10 @@ function Todo() {
           // TODO: handle error
         }
       }
+
+      useEffect(()=> {
+        getData()
+      },[route.params])
     
       useEffect(()=>{
         // used ref here, as we don't the storing of data on first render
@@ -42,7 +47,7 @@ function Todo() {
 
     //  Get data from async storage
       useEffect(()=>{
-        getData(taskItems)
+        getData()
       },[])
     
     // Sets the data from async storage into state
@@ -114,12 +119,16 @@ function Todo() {
       const renderUserInputArea = () => {
         return (
             <View style={styles.userInputView}>
-                 <TextInput style={styles.input} placeholder={TEXTS.placeholders.todoInput} value={task?.title} onChangeText={text => changeText(text)} />
-                    <TouchableOpacity onPress={() => handleAddTask()}>
-                    <View style={styles.addWrapper}>
-                        <Text style={styles.addText}>+</Text>
-                    </View>
-                    </TouchableOpacity>
+                 <TextInput style={styles.input} placeholder={TEXTS.placeholders.todoInput}
+                  value={task?.title}
+                  onChangeText={text => changeText(text)}
+                  ref={inputRef}
+                  />
+                  <TouchableOpacity onPress={() => handleAddTask()}>
+                      <View style={styles.addWrapper}>
+                          <Text style={styles.addText}>+</Text>
+                      </View>
+                  </TouchableOpacity>
             </View>
         )
       }
@@ -149,19 +158,60 @@ function Todo() {
       /*
       @output: JSX
       */
+      const renderNothingToShow = () => {
+        return(
+          <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                <Text style={{fontSize: 22}}>{TEXTS.nothingToShowTitle}</Text>
+                <Text style={{fontSize: 15, marginTop: 5}}>{TEXTS.nothingToShowText1}</Text>
+                <Text style={{fontSize: 15}}>{TEXTS.nothingToShowText2}</Text>
+
+                <TouchableOpacity style={styles.createTodo} 
+                    onPress={()=>{inputRef.current.focus()}}>
+                    <Text style={{fontSize: 15, color: COLORS.whiteColor}}>{`Create a todo`}</Text>
+              </TouchableOpacity>
+
+          </View>
+        )  
+      }
+
+      const handleTaskPressed = (id) => {
+        let itemsCopy = [...taskItems];
+        let obj = itemsCopy.find(o => o.ID === id);
+        
+
+        navigation.navigate('details', {detailObj: obj})
+      }
+
+      /*
+      @output: JSX
+      */
       const renderTasks = () => {
-        if(!taskItems || taskItems.length == 0){
-            return null
+       let pendingItems = []
+       let completedItems = []
+      
+      //  get the pending and completed items length
+       taskItems.map((items)=> {
+          if(items.type == TEXTS.activeTab.pending){
+            pendingItems.push(items)
+          } else if(items.type == TEXTS.activeTab.completed){
+            completedItems.push(items)
+          }
+       })
+
+      //  Check if we need to 'Nothing to show' instead
+        if(!taskItems || taskItems.length == 0 || (activeTab == TEXTS.activeTab.pending && pendingItems.length == 0) || 
+        (activeTab == TEXTS.activeTab.completed && completedItems.length == 0)){
+            return renderNothingToShow()
         } else{
             return (
                 taskItems.map((item, index) => {
                   if(activeTab == TEXTS.activeTab.pending && item.type == TEXTS.activeTab.pending){
                     return (
-                      <Task handleCheckBox = {handleCheckBox} item={item} key={index} removeItem={removeTask}  /> 
+                      <Task taskPressed={handleTaskPressed} handleCheckBox = {handleCheckBox} item={item} key={index} removeItem={removeTask}  /> 
                     )
                   } else if(activeTab == TEXTS.activeTab.completed && item.type == TEXTS.activeTab.completed){
                     return (
-                      <Task handleCheckBox = {handleCheckBox} item={item} key={index} removeItem={removeTask}  /> 
+                      <Task taskPressed={handleTaskPressed} handleCheckBox = {handleCheckBox} item={item} key={index} removeItem={removeTask}  /> 
                     )
                   }
                    
@@ -222,28 +272,6 @@ function Todo() {
           return TEXTS.headings.completedTasks
         }
       }
-
-      /*
-      @output: JSX
-      */
-      const renderHeader = () => {
-          return (
-            <View style={styles.headerView}>
-                <View>
-                      <View>
-                            <Text>Welcome Back,</Text>
-                      </View>
-                      <View>
-                            <Text style={{fontSize: 20, fontWeight: '800'}}>James Sullivan</Text>
-                      </View>
-                </View>
-
-                <View style={styles.dateView}>
-                      <Text>{getFormattedDate()}</Text>
-                </View>
-            </View>
-          )
-      }
     
     /*
       @output: JSX
@@ -263,7 +291,11 @@ function Todo() {
     return (
         <SafeAreaView style={styles.container}>
 
-          {renderHeader()}
+          <Header
+            backButton= {false}
+            preHeading='Welcome back,'
+            heading="James Sullivan"
+          />
 
           {renderTabs()}
 

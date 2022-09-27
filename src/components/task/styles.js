@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import COLORS from '../constants/Colors';
+import COLORS from '../../constants/Colors';
 
 const styles = StyleSheet.create({
     item: {
@@ -39,4 +39,12 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
       borderRadius:2
     },
+    headerView: {
+      flexDirection: 'row', 
+      justifyContent: 'space-between', 
+      paddingHorizontal: 20, 
+      paddingTop: 20
+    },
   });
+
+  export default styles

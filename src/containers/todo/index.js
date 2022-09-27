@@ -2,12 +2,12 @@ import React, {useState, useEffect, useRef} from 'react';
 import { KeyboardAvoidingView, Text, View, TextInput,
    TouchableOpacity, Keyboard, ScrollView, Platform, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Task from '../../components/task';
+import Task from '../../components/task/task';
 import COLORS from '../../constants/Colors';
 import TEXTS from '../../constants/Texts';
 import uuid from 'react-native-uuid';
-import {getFormattedDate} from '../../utils/helpers.js';
 import styles from './styles';
+import {renderHeader} from '../../components/header/header'
 
 function Todo() {
     const initialTask = {title: '', description: '', type: TEXTS.activeTab.pending, ID: ''}
@@ -259,28 +259,6 @@ function Todo() {
         } else {
           return TEXTS.headings.completedTasks
         }
-      }
-
-      /*
-      @output: JSX
-      */
-      const renderHeader = () => {
-          return (
-            <View style={styles.headerView}>
-                <View>
-                      <View>
-                            <Text>Welcome Back,</Text>
-                      </View>
-                      <View>
-                            <Text style={{fontSize: 20, fontWeight: '800'}}>James Sullivan</Text>
-                      </View>
-                </View>
-
-                <View style={styles.dateView}>
-                      <Text>{getFormattedDate()}</Text>
-                </View>
-            </View>
-          )
       }
     
     /*

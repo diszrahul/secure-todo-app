@@ -2,17 +2,18 @@ import React from 'react';
 import Todo from './index';
 import {render, fireEvent} from '@testing-library/react-native';
 import '@testing-library/jest-dom';
+import MockedNavigator from '../../navigators/MockNavigators'
 
 
 it("has the correct title in the button", () => {
-    const { getByText } = render(<Todo />);
+    const { getByText } = render(<MockedNavigator component={Todo}/>);
     expect(getByText("Today's tasks")).toBeTruthy();
 });
 
 // create an item
 it("should create an item", () => {
     // Get all the required details
-    const { getByText, getByPlaceholderText } = render(<Todo />);
+    const { getByText, getByPlaceholderText } = render(<MockedNavigator component={Todo}/>);
     const addItemButton = getByText("+");
     const textInput = getByPlaceholderText('Write a task');
     const createdText = 'first item';
@@ -29,7 +30,7 @@ it("should create an item", () => {
 // create multiple items
 it("should create multiple items", () => {
     // Get all the required details
-    const { getByText, getByPlaceholderText } = render(<Todo />);
+    const { getByText, getByPlaceholderText } = render(<MockedNavigator component={Todo}/>);
     const addItemButton = getByText("+");
     const textInput = getByPlaceholderText('Write a task');
     const createdText_1 = 'first item';
@@ -52,7 +53,7 @@ it("should create multiple items", () => {
 // delete an item
 it("should delete an item", () => {
     // Get all the required details
-    const { getByText, getByPlaceholderText, queryByText, getByTestId } = render(<Todo />);
+    const { getByText, getByPlaceholderText, queryByText, getByTestId } = render(<MockedNavigator component={Todo}/>);
     const addItemButton = getByText("+");
     const textInput = getByPlaceholderText('Write a task');
     const createdText = 'first item';
@@ -72,7 +73,7 @@ it("should delete an item", () => {
 
 // Should throw error if adding todo without text
 it("Should throw error if adding todo without text", () => {
-    const { getByText} = render(<Todo />);
+    const { getByText} = render(<MockedNavigator component={Todo}/>);
     const addItemButton = getByText("+");
 
     // fire events
@@ -87,7 +88,7 @@ it("Should throw error if adding todo without text", () => {
 
 // should remove error when valid text is entered
 it("should remove error when valid text is entered", () => {
-    const { getByText, getByPlaceholderText, queryByText} = render(<Todo />);
+    const { getByText, getByPlaceholderText, queryByText} = render(<MockedNavigator component={Todo}/>);
     const addItemButton = getByText("+");
 
     // fire events

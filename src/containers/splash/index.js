@@ -10,6 +10,7 @@ function Splash({navigation}){
             <Lottie
             autoPlay
             loop={false}
+            resizeMode={'cover'}
             source={require('../../assets/animation/splash.json')}
             onAnimationFinish={()=>{navigation.navigate('auth')}}
             />

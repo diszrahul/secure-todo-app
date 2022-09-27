@@ -10,7 +10,7 @@ import COLORS from '../../constants/Colors';
           <View style={styles.headerView}>
               <View>
                    {props.backButton?
-                    <TouchableOpacity style={{marginBottom: 10, marginLeft: -5, flexDirection: 'row', alignItems: 'flex-end'}} onPress={()=>{props.handleBack()}} >
+                    <TouchableOpacity style={styles.backButton} onPress={()=>{props.handleBack()}} >
                         <BackIcon color={COLORS.primaryColor} height={20} width={20}/>
                         <Text style={{color: COLORS.primaryColor}}>Back</Text>
                     </TouchableOpacity>: 

@@ -52,10 +52,14 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center',
-        borderColor: '#C0C0C0',
+        borderColor: COLORS.primaryColor,
         borderWidth: 1,
       },
-      addText: {},
+      addText: {
+        fontSize: 20,
+        color: COLORS.primaryColor,
+        fontWeight: '400'
+      },
       userInputView: {
         width: '100%',
         flexDirection: 'row',

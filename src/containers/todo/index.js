@@ -348,7 +348,7 @@ function Todo({route, navigation}) {
               <View style={styles.tasksWrapper}>
 
                     {/* delete All */}
-                    {renderDeleteAll()}
+                    {/* {renderDeleteAll()} */}
                     
                     {/* All TODOs will render here */}
                     <View style={styles.items}>

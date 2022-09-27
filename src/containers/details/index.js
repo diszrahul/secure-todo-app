@@ -118,6 +118,7 @@ import COLORS from '../../constants/Colors';
                    onChangeText={text => changeTextDesc(text)}
                    style={styles.descInput} 
                    autoCorrect= {false}
+                   textAlignVertical= 'top'
                    value={todo?.description}/>
                   
                   {renderErrorView()}

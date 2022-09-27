@@ -16,8 +16,9 @@ const TEXTS = {
         completedTasks: `Completed tasks`
     },
     nothingToShowTitle: `Nothing to show here`,
-    nothingToShowText1: `Start by Adding few items in`,
-    nothingToShowText2: `your todo list`
+    nothingToShowText1: `Start by adding few items in`,
+    nothingToShowText2: `your todo list`,
+    nothingToShowCompleted: `No tasks completed yet`
   };
   
   export default TEXTS;

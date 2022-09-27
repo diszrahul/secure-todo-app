@@ -1,5 +1,6 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 import COLORS from '../../constants/Colors';
+let windowWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
     container: {
@@ -36,19 +37,19 @@ const styles = StyleSheet.create({
         bottom: 20,
       },
       input: {
-        paddingVertical: 15,
+        paddingVertical: 10,
         paddingHorizontal: 15,
         backgroundColor: COLORS.whiteColor,
         borderRadius: 60,
         borderColor: '#C0C0C0',
         borderWidth: 1,
-        width: 250,
+        width: windowWidth*0.70,
       },
       addWrapper: {
-        width: 60,
-        height: 60,
+        width: 50,
+        height: 50,
         backgroundColor: COLORS.whiteColor,
-        borderRadius: 60,
+        borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center',
         borderColor: '#C0C0C0',
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
       userInputView: {
         width: '100%',
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        justifyContent: 'space-evenly',
         alignItems: 'center'
       },
       errorView: {

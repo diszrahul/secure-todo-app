@@ -16,8 +16,8 @@ import COLORS from '../../constants/Colors';
                     </TouchableOpacity>: 
                     null}
 
-                    <View>
-                          <Text>{props.preHeading}</Text>
+                    <View style={{marginBottom: 10}}>
+                          <Text style={{fontSize: 13, fontWeight: '500'}}>{props.preHeading}</Text>
                     </View>
                     <View>
                           <Text style={{fontSize: 20, fontWeight: '800'}}>{props.heading}</Text>

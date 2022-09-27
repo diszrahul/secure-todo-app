@@ -7,7 +7,7 @@ import COLORS from '../../constants/Colors';
 import TEXTS from '../../constants/Texts';
 import uuid from 'react-native-uuid';
 import styles from './styles';
-import Header from '../../components/header/header'
+import Header from '../../components/header/header';
 
 function Todo({route, navigation}) {
     const initialTask = {title: '', description: '', type: TEXTS.activeTab.pending, ID: ''}
@@ -17,6 +17,7 @@ function Todo({route, navigation}) {
     const [activeTab, setActiveTab] = useState(TEXTS.activeTab.pending);
     const didMount = useRef(false);
     const inputRef = useRef(null);
+    const characters = ['poke','anon','iron','koya', 'sama', 'scrm', 'walt']
 
     // For persisting the todos 
     const storeData = async (value) => {
@@ -70,7 +71,11 @@ function Todo({route, navigation}) {
            return false
         }
         Keyboard.dismiss();
-        setTaskItems([...taskItems, task])
+        let myChar = getCharacter()
+        let _task = {...task}
+        _task.character = myChar
+
+        setTaskItems([...taskItems, _task])
         setTask(initialTask);
       }
       
@@ -117,7 +122,8 @@ function Todo({route, navigation}) {
       @output: JSX
       */
       const renderUserInputArea = () => {
-        return (
+        if(activeTab == TEXTS.activeTab.pending){
+          return (
             <View style={styles.userInputView}>
                  <TextInput style={styles.input} placeholder={TEXTS.placeholders.todoInput}
                   value={task?.title}
@@ -131,6 +137,9 @@ function Todo({route, navigation}) {
                   </TouchableOpacity>
             </View>
         )
+        } else {
+          return null
+        }
       }
 
       // Delete all items and removes scope from async storage as well
@@ -159,6 +168,7 @@ function Todo({route, navigation}) {
       @output: JSX
       */
       const renderNothingToShow = () => {
+        if(activeTab == TEXTS.activeTab.pending){
         return(
           <View style={{alignItems: 'center', justifyContent: 'center'}}>
                 <Text style={{fontSize: 22}}>{TEXTS.nothingToShowTitle}</Text>
@@ -171,7 +181,20 @@ function Todo({route, navigation}) {
               </TouchableOpacity>
 
           </View>
-        )  
+        )
+        } else {
+          return(
+            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                  <Text style={{fontSize: 22}}>{TEXTS.nothingToShowCompleted}</Text>
+  
+                  <TouchableOpacity style={styles.createTodo} 
+                      onPress={()=>{setActiveTab(TEXTS.activeTab.pending)}}>
+                      <Text style={{fontSize: 15, color: COLORS.whiteColor}}>{`View pending taks`}</Text>
+                </TouchableOpacity>
+  
+            </View>
+          )
+        }  
       }
 
       const handleTaskPressed = (id) => {
@@ -286,6 +309,10 @@ function Todo({route, navigation}) {
           </View>
       )
     }
+
+    const getCharacter = () => {
+      return characters[Math.floor(Math.random() * characters.length)];
+    }
     
     // Main rendering of TODO
     return (
@@ -293,8 +320,8 @@ function Todo({route, navigation}) {
 
           <Header
             backButton= {false}
-            preHeading='Welcome back,'
-            heading="James Sullivan"
+            preHeading='Make yourself productive:'
+            heading="TODO"
           />
 
           {renderTabs()}
@@ -302,8 +329,10 @@ function Todo({route, navigation}) {
         {/* Added this scroll view to enable scrolling when list gets longer than the page */}
         <ScrollView
           contentContainerStyle={{
-            flexGrow: 1
+            flexGrow: 1,
+            paddingBottom: 100
           }}
+          showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps='handled'
         >
   

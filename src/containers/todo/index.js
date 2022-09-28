@@ -311,9 +311,9 @@ function Todo({route, navigation}) {
       return (
         <View style={styles.deleteAllView}>
                 <Text style={styles.sectionTitle}>{getHeading()}</Text>
-                <TouchableOpacity onPress={()=>{deleteAll()}}>
+                {/* <TouchableOpacity onPress={()=>{deleteAll()}}>
                     <Text>Delete</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
           </View>
       )
     }
@@ -348,7 +348,7 @@ function Todo({route, navigation}) {
               <View style={styles.tasksWrapper}>
 
                     {/* delete All */}
-                    {/* {renderDeleteAll()} */}
+                    {renderDeleteAll()}
                     
                     {/* All TODOs will render here */}
                     <View style={styles.items}>
